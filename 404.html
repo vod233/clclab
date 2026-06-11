@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fbfbfd" />
+  <meta name="color-scheme" content="light" />
+  <title>404 · 页面没有找到 — CLCLab</title>
+  <meta name="description" content="你访问的页面暂时不存在" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ---------- Reset ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #fbfbfd;
+      --bg-elevated:   #ffffff;
+      --text-primary:  #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary:  #86868b;
+      --border:        rgba(0, 0, 0, 0.08);
+      --border-strong:  rgba(0, 0, 0, 0.14);
+      --surface:       rgba(0, 0, 0, 0.04);
+      --surface-strong: rgba(0, 0, 0, 0.08);
+      --accent-blue:   #0066cc;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 40px 24px;
+    }
+
+    ::selection {
+      background: rgba(0, 102, 204, 0.18);
+      color: var(--text-primary);
+    }
+
+    /* ---------- Layout ---------- */
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 560px;
+    }
+
+    /* ---------- Background orb (matches hero aesthetic) ---------- */
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .bg::before {
+      content: "";
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffd9b8 0%, transparent 70%);
+      filter: blur(80px);
+      opacity: 0.4;
+      top: -100px;
+      right: -80px;
+    }
+    .bg::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #d6e0ff 0%, transparent 70%);
+      filter: blur(80px);
+      opacity: 0.35;
+      bottom: -80px;
+      left: -80px;
+    }
+
+    /* ---------- Logo ---------- */
+    .logo {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-bottom: 64px;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ---------- Code number ---------- */
+    .code {
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      font-size: clamp(100px, 20vw, 180px);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      opacity: 0.06;
+      margin-bottom: -32px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ---------- Headline ---------- */
+    h1 {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(36px, 7vw, 60px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    h1 .serif {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* ---------- Sub text ---------- */
+    p {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(15px, 1.5vw, 17px);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+
+    /* ---------- Button ---------- */
+    .btn {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 500;
+      background: var(--text-primary);
+      color: #fff;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+    .btn .arrow { transition: transform 0.2s ease; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    /* ---------- Divider ---------- */
+    .divider {
+      position: relative;
+      z-index: 1;
+      width: 40px;
+      height: 2px;
+      background: var(--border-strong);
+      border-radius: 999px;
+      margin: 40px auto;
+    }
+
+    /* ---------- Footer links ---------- */
+    .links {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .links a {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .links a:hover { color: var(--text-primary); }
+
+    /* ---------- Entrance animation ---------- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo        { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .code        { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+    h1           { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.10s both; }
+    p            { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+    .btn         { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both; }
+    .divider     { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+    .links       { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001s !important;
+        transition-duration: 0.001s !important;
+      }
+      .logo, .code, h1, p, .btn, .divider, .links {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 480px) {
+      .logo { margin-bottom: 48px; }
+      .links { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background orbs -->
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- Logo -->
+  <a href="/" class="logo">
+    <span class="logo-mark" aria-hidden="true">C</span>
+    <span>CLCLab</span>
+  </a>
+
+  <!-- Ghost code number -->
+  <div class="code" aria-hidden="true">404</div>
+
+  <!-- Headline -->
+  <h1>页面没有 <span class="serif">找到</span></h1>
+
+  <!-- Description -->
+  <p>
+    你访问的页面暂时不存在，可能已被移动或删除。<br />
+    返回首页，开始探索。
+  </p>
+
+  <!-- CTA -->
+  <a href="/" class="btn">
+    返回首页 <span class="arrow" aria-hidden="true">→</span>
+  </a>
+
+  <!-- Decorative divider -->
+  <div class="divider" role="separator" aria-hidden="true"></div>
+
+  <!-- Footer links -->
+  <nav class="links" aria-label="底部链接">
+    <a href="/">首页</a>
+    <a href="https://github.com/vod233/clclab" target="_blank" rel="noopener">GitHub</a>
+    <a href="/#tools">AI 工具</a>
+    <a href="/#projects">项目实验</a>
+  </nav>
+
+</body>
+</html>
