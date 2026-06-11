@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fbfbfd" />
+  <meta name="color-scheme" content="light" />
+  <title>文章目录 — CLCLab</title>
+  <meta name="description" content="CLCLab 的技术笔记、工具评测与学习记录。" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #fbfbfd;
+      --bg-elevated:  #ffffff;
+      --bg-soft:      #f5f5f7;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #86868b;
+      --border:       rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.14);
+      --surface:      rgba(0, 0, 0, 0.04);
+      --surface-strong: rgba(0, 0, 0, 0.08);
+      --accent-blue:  #0066cc;
+      --accent-purple: #6366f1;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 2px 4px rgba(0,0,0,.04);
+      --shadow-md: 0 6px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-lg: 0 30px 60px -20px rgba(0,0,0,.18), 0 8px 16px rgba(0,0,0,.05);
+      --nav-height: 64px;
+      --max-width: 800px;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "Helvetica Neue", PingFang SC, "Microsoft YaHei", sans-serif;
+      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    ::selection { background: rgba(0,102,204,.18); }
+
+    /* ── Layout ─────────────────────────────────────── */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 100px 0 140px; }
+
+    /* ── Nav (minimal) ──────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-height);
+      z-index: 100;
+      background: rgba(251,251,253,.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s;
+    }
+    .nav.scrolled { border-bottom-color: var(--border); }
+    .nav-inner {
+      height: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 17px;
+      color: var(--text-primary); text-decoration: none;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg,#1d1d1f,#3a3a3c);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px; font-weight: 700;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      padding: 8px 14px; font-size: 14px; color: var(--text-secondary);
+      border-radius: 8px; text-decoration: none;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface); }
+    .nav-links a.active { color: var(--text-primary); background: var(--surface); }
+
+    /* ── Back button ───────────────────────────────── */
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-tertiary); text-decoration: none;
+      padding: 6px 0; margin-bottom: 48px;
+      transition: color .2s;
+    }
+    .back:hover { color: var(--text-primary); }
+    .back svg { transition: transform .2s; }
+    .back:hover svg { transform: translateX(-3px); }
+
+    /* ── Section heading ────────────────────────────── */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--surface); color: var(--text-secondary);
+      font-size: 13px; font-weight: 500;
+    }
+    .eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.18);
+    }
+    h1 {
+      font-size: clamp(40px, 7vw, 60px); line-height: 1.05;
+      letter-spacing: -.025em; font-weight: 600; color: var(--text-primary);
+      margin-top: 18px;
+    }
+    h1 .serif {
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+    }
+    .subtitle {
+      margin-top: 16px; font-size: 18px; color: var(--text-secondary);
+      max-width: 520px; line-height: 1.6;
+    }
+
+    /* ── Article list ───────────────────────────────── */
+    .articles {
+      margin-top: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .article-card {
+      display: flex; gap: 24px; align-items: flex-start;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 28px 28px;
+      text-decoration: none; color: inherit;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+    .article-card:hover {
+      transform: translateY(-2px); box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
+    }
+
+    .article-card .date {
+      font-family: var(--mono); font-size: 12px; color: var(--text-tertiary);
+      white-space: nowrap; padding-top: 3px; min-width: 96px;
+    }
+
+    .article-card .body { flex: 1; min-width: 0; }
+
+    .article-card .title {
+      font-size: 19px; font-weight: 600; color: var(--text-primary);
+      letter-spacing: -.01em; line-height: 1.3;
+    }
+
+    .article-card .excerpt {
+      margin-top: 6px; font-size: 14px; color: var(--text-secondary);
+      line-height: 1.55; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .article-card .tags {
+      display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap;
+    }
+
+    .article-card .tag {
+      font-family: var(--mono); font-size: 11px; color: var(--text-secondary);
+      padding: 3px 8px; border-radius: 6px; background: var(--surface);
+    }
+
+    .article-card .arrow {
+      font-size: 18px; color: var(--text-tertiary);
+      align-self: center; flex-shrink: 0;
+      transition: transform .2s, color .2s;
+    }
+    .article-card:hover .arrow { transform: translateX(4px); color: var(--accent-blue); }
+
+    /* ── Empty state ────────────────────────────────── */
+    .empty {
+      padding: 80px 0; text-align: center; color: var(--text-tertiary);
+      font-size: 15px;
+    }
+
+    /* ── Loading ────────────────────────────────────── */
+    .loading-wrap {
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 60px 0;
+    }
+    .skeleton {
+      height: 96px; border-radius: var(--radius-md);
+      background: linear-gradient(90deg, var(--bg-soft) 25%, var(--bg-soft-2, #e8e8ed) 50%, var(--bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── Footer ─────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border); padding: 40px 0;
+      background: var(--bg-elevated);
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .footer .copyright { font-size: 13px; color: var(--text-tertiary); }
+    .footer .links { display: flex; gap: 24px; }
+    .footer .links a {
+      font-size: 13px; color: var(--text-secondary); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer .links a:hover { color: var(--text-primary); }
+
+    /* ── Reveal ─────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(16px);
+      transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 640px) {
+      section { padding: 80px 0 100px; }
+      .article-card { flex-direction: column; gap: 8px; padding: 20px; }
+      .article-card .date { min-width: auto; }
+      .article-card .arrow { display: none; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true">C</span>
+        <span>CLCLab</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#tools">AI 工具</a>
+        <a href="/#learning">GitHub 路线</a>
+        <a href="/#projects">项目实验</a>
+        <a href="/#deploy">部署记录</a>
+        <a href="/articles/article-list.html" class="active">文章</a>
+      </div>
+    </div>
+  </nav>
+
+  <section>
+    <div class="container">
+      <!-- Back -->
+      <a href="/" class="back reveal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        返回首页
+      </a>
+
+      <!-- Header -->
+      <div class="reveal">
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Articles</span>
+        <h1>文章<span class="serif">目录</span></h1>
+        <p class="subtitle">技术笔记、工具评测与学习记录。发布文章只需上传一个 Markdown 文件。</p>
+      </div>
+
+      <!-- Article list (populated by JS) -->
+      <div id="article-list">
+        <div class="loading-wrap reveal in">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="logo">
+        <span class="logo-mark" aria-hidden="true">C</span>
+        <span>CLCLab</span>
+      </div>
+      <div class="copyright">© 2026 CLCLab · Built with curiosity, deployed with Cloudflare.</div>
+      <nav class="links">
+        <a href="/">首页</a>
+        <a href="https://github.com/vod233/clclab" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Nav shadow ─────────────────────────────────── */
+    (() => {
+      const nav = document.getElementById('nav');
+      const toggle = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+      window.addEventListener('scroll', toggle, { passive: true });
+      toggle();
+    })();
+
+    /* ── Scroll reveal ──────────────────────────────── */
+    (() => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.reveal').forEach(e => e.classList.add('in'));
+        return;
+      }
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const siblings = Array.from(e.target.parentElement?.querySelectorAll('.reveal') || []);
+          const idx = siblings.indexOf(e.target);
+          e.target.style.transitionDelay = Math.max(0, idx) * 60 + 'ms';
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+      document.querySelectorAll('.reveal').forEach(e => io.observe(e));
+    })();
+
+    /* ── Article registry ───────────────────────────── */
+    // 发布文章只需两步：
+    // 1. 把 .md 文件放到 articles/ 目录
+    // 2. 在下面数组加一条记录（slug = 文件名去掉 .md）
+    const ARTICLES = [
+      {
+        slug: 'clclab-build',
+        date: '2026-06-13',
+        title: 'CLCLab 建站复盘',
+        excerpt: '从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。',
+        tags: ['建站', 'Cloudflare'],
+      },
+      {
+        slug: 'cursor-copilot',
+        date: '2026-06-15',
+        title: 'Cursor + Copilot 协作写作体验',
+        excerpt: '为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。',
+        tags: ['AI', '工具评测'],
+      },
+    ];
+
+    /* ── Render list ───────────────────────────────── */
+    const listEl = document.getElementById('article-list');
+
+    const renderList = () => {
+      if (!ARTICLES.length) {
+        listEl.innerHTML = '<p class="empty">暂无文章，敬请期待。</p>';
+        return;
+      }
+      listEl.innerHTML = ARTICLES.map((a, i) => `
+        <a href="article.html?slug=${a.slug}" class="article-card reveal">
+          <div class="date">${a.date}</div>
+          <div class="body">
+            <div class="title">${a.title}</div>
+            <div class="excerpt">${a.excerpt}</div>
+            <div class="tags">
+              ${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      `).join('');
+
+      // Trigger reveal for newly inserted items
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#article-list .reveal').forEach((el, idx) => {
+          el.style.transitionDelay = idx * 70 + 'ms';
+          el.classList.add('in');
+        });
+      });
+    };
+
+    renderList();
+  </script>
+</body>
+</html>

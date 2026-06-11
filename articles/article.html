@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fbfbfd" />
+  <meta name="color-scheme" content="light" />
+  <title>文章 — CLCLab</title>
+  <meta name="description" content="CLCLab 技术笔记与学习记录。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #fbfbfd;
+      --bg-elevated:  #ffffff;
+      --bg-soft:      #f5f5f7;
+      --bg-soft-2:    #efeff2;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #86868b;
+      --border:       rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.14);
+      --surface:      rgba(0, 0, 0, 0.04);
+      --surface-strong: rgba(0, 0, 0, 0.08);
+      --accent-blue:  #0066cc;
+      --accent-purple: #6366f1;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 2px 4px rgba(0,0,0,.04);
+      --shadow-md: 0 6px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --nav-height: 64px;
+      --article-width: 720px;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "Helvetica Neue", PingFang SC, "Microsoft YaHei", sans-serif;
+      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    ::selection { background: rgba(0,102,204,.18); }
+
+    /* ── Nav ───────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-height); z-index: 100;
+      background: rgba(251,251,253,.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s;
+    }
+    .nav.scrolled { border-bottom-color: var(--border); }
+    .nav-inner {
+      height: 100%; max-width: 1180px; margin: 0 auto;
+      padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 17px;
+      color: var(--text-primary); text-decoration: none;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg,#1d1d1f,#3a3a3c);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px; font-weight: 700;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      padding: 8px 14px; font-size: 14px; color: var(--text-secondary);
+      border-radius: 8px; text-decoration: none;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); background: var(--surface); }
+    .nav-links a.active { color: var(--text-primary); background: var(--surface); }
+
+    /* ── Layout ────────────────────────────────────── */
+    .container {
+      max-width: var(--article-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 100px 0 140px; }
+
+    /* ── Back button ──────────────────────────────── */
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-tertiary); text-decoration: none;
+      margin-bottom: 48px; transition: color .2s;
+    }
+    .back:hover { color: var(--text-primary); }
+    .back svg { transition: transform .2s; }
+    .back:hover svg { transform: translateX(-3px); }
+
+    /* ── Article meta ──────────────────────────────── */
+    .article-meta {
+      display: flex; flex-direction: column; gap: 0;
+      margin-bottom: 48px;
+    }
+
+    .article-date {
+      font-family: var(--mono); font-size: 13px; color: var(--text-tertiary);
+      letter-spacing: .01em; margin-bottom: 12px;
+    }
+
+    h1.article-title {
+      font-size: clamp(32px, 6vw, 52px);
+      line-height: 1.08; letter-spacing: -.025em; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    h1.article-title .serif {
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+    }
+
+    .article-subtitle {
+      margin-top: 16px; font-size: 18px; color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ── Article content (rendered Markdown) ───────── */
+    .article-body {
+      font-size: 17px; line-height: 1.75; color: var(--text-primary);
+      word-break: break-word; overflow-wrap: break-word;
+    }
+
+    /* Headings */
+    .article-body h1,
+    .article-body h2,
+    .article-body h3,
+    .article-body h4 {
+      font-weight: 600; color: var(--text-primary);
+      line-height: 1.25; letter-spacing: -.015em;
+      margin-top: 2.4em; margin-bottom: .6em;
+    }
+    .article-body h1 { font-size: 2em; }
+    .article-body h2 { font-size: 1.5em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+    .article-body h3 { font-size: 1.2em; }
+    .article-body h4 { font-size: 1em; }
+
+    /* Paragraphs */
+    .article-body p { margin-bottom: 1.4em; }
+
+    /* Links */
+    .article-body a {
+      color: var(--accent-blue); text-decoration: underline;
+      text-decoration-color: rgba(0,102,204,.35); text-underline-offset: 2px;
+      transition: text-decoration-color .2s;
+    }
+    .article-body a:hover { text-decoration-color: var(--accent-blue); }
+
+    /* Lists */
+    .article-body ul, .article-body ol {
+      margin: 0 0 1.4em 1.5em;
+    }
+    .article-body li { margin-bottom: .4em; }
+    .article-body ul > li { list-style: none; position: relative; }
+    .article-body ul > li::before {
+      content: ""; position: absolute; left: -1.2em; top: .65em;
+      width: 5px; height: 5px; border-radius: 50%; background: var(--text-tertiary);
+    }
+
+    /* Blockquote */
+    .article-body blockquote {
+      border-left: 3px solid var(--border-strong);
+      padding: 4px 0 4px 20px; margin: 1.6em 0;
+      color: var(--text-secondary); font-style: italic;
+    }
+
+    /* Inline code */
+    .article-body code {
+      font-family: var(--mono); font-size: .87em;
+      background: var(--surface); padding: 2px 6px; border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    /* Code blocks */
+    .article-body pre {
+      background: #1d1d1f; border-radius: var(--radius-md); padding: 24px;
+      overflow-x: auto; margin: 1.6em 0;
+      font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    }
+    .article-body pre code {
+      background: none; padding: 0; border-radius: 0; color: #e5e5e5;
+      font-size: inherit;
+    }
+
+    /* Tables */
+    .article-body table {
+      width: 100%; border-collapse: collapse;
+      margin: 1.6em 0; font-size: 15px; overflow: hidden;
+      border-radius: var(--radius-sm); border: 1px solid var(--border);
+    }
+    .article-body th {
+      background: var(--bg-soft); font-weight: 600; text-align: left;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .article-body td {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .article-body tr:last-child td { border-bottom: none; }
+    .article-body tr:nth-child(even) td { background: rgba(0,0,0,.015); }
+
+    /* HR */
+    .article-body hr {
+      border: none; border-top: 1px solid var(--border);
+      margin: 2.4em 0;
+    }
+
+    /* Images */
+    .article-body img {
+      max-width: 100%; border-radius: var(--radius-md);
+      margin: 1.6em 0;
+    }
+
+    /* Task lists */
+    .article-body input[type="checkbox"] { margin-right: 6px; }
+
+    /* ── Loading state ─────────────────────────────── */
+    .loading-wrap { padding: 40px 0; }
+    .skeleton { border-radius: var(--radius-sm); margin-bottom: 16px; }
+    .sk-title  { height: 52px; width: 70%; }
+    .sk-line   { height: 18px; }
+    .sk-line-w { width: 100%; }
+    .sk-line-w2 { width: 85%; }
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-soft) 25%, var(--bg-soft-2) 50%, var(--bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── Error state ──────────────────────────────── */
+    .error-state {
+      padding: 80px 0; text-align: center;
+      display: none;
+    }
+    .error-state.visible { display: block; }
+    .error-state .code {
+      font-family: var(--mono); font-size: 80px; font-weight: 500;
+      color: var(--text-primary); opacity: .06; line-height: 1; margin-bottom: 24px;
+    }
+    .error-state h2 { font-size: 28px; font-weight: 600; margin-bottom: 12px; }
+    .error-state p  { color: var(--text-secondary); margin-bottom: 28px; }
+    .error-state .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 500;
+      background: var(--text-primary); color: #fff; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .error-state .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+    /* ── Article footer ─────────────────────────────── */
+    .article-footer {
+      margin-top: 80px; padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .article-footer .back-list {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: var(--accent-blue); text-decoration: none;
+      transition: gap .2s;
+    }
+    .article-footer .back-list:hover { gap: 10px; }
+    .article-footer .updated {
+      font-size: 12px; color: var(--text-tertiary); font-family: var(--mono);
+    }
+
+    /* ── Footer ────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border); padding: 40px 0;
+      background: var(--bg-elevated);
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .footer .copyright { font-size: 13px; color: var(--text-tertiary); }
+    .footer .links { display: flex; gap: 24px; }
+    .footer .links a {
+      font-size: 13px; color: var(--text-secondary); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer .links a:hover { color: var(--text-primary); }
+
+    /* ── Reveal ────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(14px);
+      transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
+
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 640px) {
+      section { padding: 80px 0 100px; }
+      h1.article-title { font-size: 30px; }
+      .article-body { font-size: 16px; }
+      .article-body pre { font-size: 12px; padding: 16px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true">C</span>
+        <span>CLCLab</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#tools">AI 工具</a>
+        <a href="/#learning">GitHub 路线</a>
+        <a href="/#projects">项目实验</a>
+        <a href="/#deploy">部署记录</a>
+        <a href="article-list.html" class="active">文章</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Article content -->
+  <section>
+    <div class="container">
+
+      <!-- Back link -->
+      <a href="article-list.html" class="back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        文章目录
+      </a>
+
+      <!-- Loading skeleton -->
+      <div id="loading" class="loading-wrap">
+        <div class="skeleton sk-title"></div>
+        <div class="skeleton sk-line sk-line-w" style="margin-top:24px"></div>
+        <div class="skeleton sk-line sk-line-w2"></div>
+        <div class="skeleton sk-line sk-line-w"></div>
+        <div class="skeleton sk-line sk-line-w2" style="margin-bottom:40px"></div>
+        <div class="skeleton sk-line sk-line-w"></div>
+        <div class="skeleton sk-line sk-line-w2"></div>
+        <div class="skeleton sk-line sk-line-w"></div>
+      </div>
+
+      <!-- Error state (hidden by default) -->
+      <div id="error" class="error-state">
+        <div class="code">404</div>
+        <h2>文章没有找到</h2>
+        <p>你访问的文章暂时不存在，可能已被移除。</p>
+        <a href="article-list.html" class="btn">
+          返回目录 <span>→</span>
+        </a>
+      </div>
+
+      <!-- Article content (populated by JS) -->
+      <article id="article" style="display:none">
+
+        <header class="article-meta reveal">
+          <div class="article-date" id="article-date"></div>
+          <h1 class="article-title" id="article-title"></h1>
+        </header>
+
+        <div class="article-body reveal" id="article-content"></div>
+
+        <footer class="article-footer reveal">
+          <a href="article-list.html" class="back-list">
+            ← 返回文章目录
+          </a>
+          <span class="updated" id="article-updated"></span>
+        </footer>
+
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="logo">
+        <span class="logo-mark" aria-hidden="true">C</span>
+        <span>CLCLab</span>
+      </div>
+      <div class="copyright">© 2026 CLCLab · Built with curiosity, deployed with Cloudflare.</div>
+      <nav class="links">
+        <a href="/">首页</a>
+        <a href="https://github.com/vod233/clclab" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- marked.js: converts Markdown → HTML -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    /* ── Nav shadow ────────────────────────────────── */
+    (() => {
+      const nav = document.getElementById('nav');
+      const toggle = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+      window.addEventListener('scroll', toggle, { passive: true });
+      toggle();
+    })();
+
+    /* ── Get slug from URL query param ─────────────── */
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('slug');
+
+    /* ── Article registry (same as article-list.html) ── */
+    // 发布文章只需两步：
+    // 1. 把 .md 文件放到 articles/ 目录
+    // 2. 在下面数组加一条记录（slug = 文件名去掉 .md）
+    const ARTICLES = {
+      'clclab-build': {
+        title: 'CLCLab 建站复盘',
+        date: '2026-06-13',
+        updated: '2026-06-13',
+        subtitle: '从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。',
+      },
+      'cursor-copilot': {
+        title: 'Cursor + Copilot 协作写作体验',
+        date: '2026-06-15',
+        updated: '2026-06-15',
+        subtitle: '为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。',
+      },
+    };
+
+    /* ── Render article ────────────────────────────── */
+    const loadingEl  = document.getElementById('loading');
+    const errorEl    = document.getElementById('error');
+    const articleEl = document.getElementById('article');
+
+    const titleEl     = document.getElementById('article-title');
+    const dateEl      = document.getElementById('article-date');
+    const updatedEl   = document.getElementById('article-updated');
+    const contentEl   = document.getElementById('article-content');
+
+    if (!slug) {
+      // No slug: redirect to list
+      loadingEl.style.display = 'none';
+      articleEl.style.display = 'none';
+      errorEl.classList.add('visible');
+      errorEl.querySelector('h2').textContent = '未指定文章';
+      errorEl.querySelector('p').textContent  = '请从文章目录选择要阅读的文章。';
+    } else if (!ARTICLES[slug]) {
+      // Slug not in registry: show error
+      loadingEl.style.display = 'none';
+      articleEl.style.display = 'none';
+      errorEl.classList.add('visible');
+      document.title = '404 · 文章没有找到 — CLCLab';
+    } else {
+      // Fetch and render
+      const meta = ARTICLES[slug];
+
+      // Update page title
+      document.title = meta.title + ' — CLCLab';
+      document.querySelector('meta[name="description"]')
+        .setAttribute('content', meta.subtitle || '');
+
+      // Build the subtitle element and insert after h1
+      const subtitleHtml = meta.subtitle
+        ? `<p class="article-subtitle">${meta.subtitle}</p>`
+        : '';
+
+      titleEl.innerHTML = meta.title;
+      titleEl.insertAdjacentHTML('afterend', subtitleHtml);
+
+      dateEl.textContent    = meta.date;
+      updatedEl.textContent = '更新于 ' + meta.updated;
+
+      // Set marked options
+      if (typeof marked !== 'undefined') {
+        marked.setOptions({
+          breaks: true,       // GFM line breaks
+          gfm: true,          // GitHub Flavored Markdown
+        });
+      }
+
+      fetch(slug + '.md')
+        .then(res => {
+          if (!res.ok) throw new Error('not found');
+          return res.text();
+        })
+        .then(md => {
+          if (typeof marked !== 'undefined') {
+            contentEl.innerHTML = marked.parse(md);
+          } else {
+            // Fallback: show raw Markdown if CDN fails
+            contentEl.innerHTML = '<pre>' + md.replace(/</g, '&lt;') + '</pre>';
+            contentEl.style.fontFamily = 'var(--mono)';
+            contentEl.style.fontSize = '14px';
+          }
+        })
+        .then(() => {
+          // Hide loading, show content
+          loadingEl.style.display = 'none';
+          articleEl.style.display = 'block';
+
+          // Trigger reveal animations
+          requestAnimationFrame(() => {
+            document.querySelectorAll('.reveal').forEach((el, idx) => {
+              el.style.transitionDelay = idx * 80 + 'ms';
+              el.classList.add('in');
+            });
+          });
+        })
+        .catch(() => {
+          loadingEl.style.display = 'none';
+          articleEl.style.display  = 'none';
+          errorEl.classList.add('visible');
+        });
+    }
+  </script>
+</body>
+</html>
