@@ -9,12 +9,7 @@
   <meta name="description" content="CLCLab 是一个用于学习 AI 工具、GitHub 工作流、项目实验和部署实践的个人学习实验室。" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
+  <!-- No external font CDN — uses system fonts for China network performance -->
 
   <!-- =========================================================
        STYLES
@@ -83,10 +78,10 @@
       --nav-height: 64px;
 
       /* Font stacks */
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-        "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
-      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
-      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      /* Chinese-friendly font stack — no external CDN */
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Serif SC", "Noto Serif CJK SC", Georgia, serif;
+      --serif: Georgia, "Times New Roman", "PingFang SC", "Microsoft YaHei", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+      --mono: ui-monospace, "Cascadia Code", "Fira Code", "SF Mono", "SFMono-Regular", Menlo, Consolas, "Microsoft YaHei Mono", monospace;
     }
 
     /* ---------- 2. Base elements ---------- */

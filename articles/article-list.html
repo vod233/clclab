@@ -10,9 +10,7 @@
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- No external font loading — uses system fonts to avoid China network latency -->
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,10 +36,11 @@
       --shadow-lg: 0 30px 60px -20px rgba(0,0,0,.18), 0 8px 16px rgba(0,0,0,.05);
       --nav-height: 64px;
       --max-width: 800px;
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-        "Helvetica Neue", PingFang SC, "Microsoft YaHei", sans-serif;
-      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
-      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      /* Chinese-friendly serif fallback — no Google Fonts CDN */
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Serif SC", Georgia, serif;
+      --serif: Georgia, "Times New Roman", "PingFang SC", "Microsoft YaHei", serif;
+      /* System monospace stack */
+      --mono: ui-monospace, "Cascadia Code", "Fira Code", "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
     }
 
     html { scroll-behavior: smooth; }

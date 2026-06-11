@@ -9,9 +9,7 @@
   <meta name="description" content="CLCLab 技术笔记与学习记录。" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d1d1f'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='-apple-system,Segoe UI,sans-serif' font-size='15' font-weight='700' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- No external font loading — uses system fonts to avoid China network latency -->
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,10 +35,12 @@
       --shadow-md: 0 6px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
       --nav-height: 64px;
       --article-width: 720px;
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-        "Helvetica Neue", PingFang SC, "Microsoft YaHei", sans-serif;
-      --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
-      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      /* Chinese-friendly serif: Georgia falls back to system Chinese serif on Windows/Mac */
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Serif SC", "Noto Serif CJK SC", Georgia, serif;
+      /* Serif used for italic editorial moments */
+      --serif: Georgia, "Times New Roman", "PingFang SC", "Microsoft YaHei", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+      /* Mono: system monospace stack (JetBrains Mono removed for performance) */
+      --mono: ui-monospace, "Cascadia Code", "Fira Code", "SF Mono", "SFMono-Regular", Menlo, Consolas, "Microsoft YaHei Mono", monospace;
     }
 
     html { scroll-behavior: smooth; }
