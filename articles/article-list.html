@@ -339,43 +339,26 @@
       document.querySelectorAll('.reveal').forEach(e => io.observe(e));
     })();
 
-    /* ── Article registry ───────────────────────────── */
-    // 发布文章只需两步：
-    // 1. 把 .md 文件放到 articles/ 目录
-    // 2. 在下面数组加一条记录（slug = 文件名去掉 .md）
-    const ARTICLES = [
-      {
-        slug: 'clclab-build',
-        date: '2026-06-13',
-        title: 'CLCLab 建站复盘',
-        excerpt: '从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。',
-        tags: ['建站', 'Cloudflare'],
-      },
-      {
-        slug: 'cursor-copilot',
-        date: '2026-06-15',
-        title: 'Cursor + Copilot 协作写作体验',
-        excerpt: '为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。',
-        tags: ['AI', '工具评测'],
-      },
-    ];
-
-    /* ── Render list ───────────────────────────────── */
+    /* ── Article registry (loaded from registry.json) ── */
+    // 发布文章只需：
+    //   1. 把 .md 文件放到 articles/ 目录
+    //   2. 在 articles/registry.json 的 articles 数组里加一条记录
+    //   3. git push
     const listEl = document.getElementById('article-list');
 
-    const renderList = () => {
-      if (!ARTICLES.length) {
+    const renderList = (articles) => {
+      if (!articles.length) {
         listEl.innerHTML = '<p class="empty">暂无文章，敬请期待。</p>';
         return;
       }
-      listEl.innerHTML = ARTICLES.map((a, i) => `
+      listEl.innerHTML = articles.map((a) => `
         <a href="article.html?slug=${a.slug}" class="article-card reveal">
           <div class="date">${a.date}</div>
           <div class="body">
             <div class="title">${a.title}</div>
-            <div class="excerpt">${a.excerpt}</div>
+            <div class="excerpt">${a.excerpt || ''}</div>
             <div class="tags">
-              ${a.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+              ${(a.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}
             </div>
           </div>
           <span class="arrow" aria-hidden="true">→</span>
@@ -391,7 +374,21 @@
       });
     };
 
-    renderList();
+    // Show loading shimmer
+    listEl.innerHTML = `
+      <div class="loading-wrap">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>`;
+
+    fetch('registry.json', { cache: 'no-cache' })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => renderList((data.articles || []).slice().sort((a, b) => b.date.localeCompare(a.date))))
+      .catch(err => {
+        console.error('Failed to load registry:', err);
+        listEl.innerHTML = '<p class="empty">文章列表加载失败，请刷新重试。</p>';
+      });
   </script>
 </body>
 </html>

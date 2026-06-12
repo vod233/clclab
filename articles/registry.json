@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "slug": "clclab-build",
+      "title": "CLCLab 建站复盘",
+      "date": "2026-06-13",
+      "updated": "2026-06-13",
+      "excerpt": "从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。",
+      "tags": ["建站", "Cloudflare"]
+    },
+    {
+      "slug": "cursor-copilot",
+      "title": "Cursor + Copilot 协作写作体验",
+      "date": "2026-06-15",
+      "updated": "2026-06-15",
+      "excerpt": "为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。",
+      "tags": ["AI", "工具评测"]
+    }
+  ]
+}

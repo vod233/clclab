@@ -423,26 +423,11 @@
     const params = new URLSearchParams(location.search);
     const slug = params.get('slug');
 
-    /* ── Article registry (same as article-list.html) ── */
-    // 发布文章只需两步：
-    // 1. 把 .md 文件放到 articles/ 目录
-    // 2. 在下面数组加一条记录（slug = 文件名去掉 .md）
-    const ARTICLES = {
-      'clclab-build': {
-        title: 'CLCLab 建站复盘',
-        date: '2026-06-13',
-        updated: '2026-06-13',
-        subtitle: '从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。',
-      },
-      'cursor-copilot': {
-        title: 'Cursor + Copilot 协作写作体验',
-        date: '2026-06-15',
-        updated: '2026-06-15',
-        subtitle: '为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。',
-      },
-    };
-
-    /* ── Render article ────────────────────────────── */
+    /* ── Article registry (loaded from registry.json) ── */
+    // 发布文章只需：
+    //   1. 把 .md 文件放到 articles/ 目录
+    //   2. 在 articles/registry.json 的 articles 数组里加一条记录
+    //   3. git push
     const loadingEl  = document.getElementById('loading');
     const errorEl    = document.getElementById('error');
     const articleEl = document.getElementById('article');
@@ -452,79 +437,89 @@
     const updatedEl   = document.getElementById('article-updated');
     const contentEl   = document.getElementById('article-content');
 
+    // XSS protection: any text inserted via innerHTML must be escaped first.
+    // We never trust registry.json content — treat all fields as user input.
+    const escape = (s) => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const showError = (title, msg, setTitle) => {
+      loadingEl.style.display = 'none';
+      articleEl.style.display  = 'none';
+      errorEl.classList.add('visible');
+      if (title) errorEl.querySelector('h2').textContent = title;
+      if (msg)   errorEl.querySelector('p').textContent  = msg;
+      if (setTitle) document.title = setTitle;
+    };
+
     if (!slug) {
-      // No slug: redirect to list
-      loadingEl.style.display = 'none';
-      articleEl.style.display = 'none';
-      errorEl.classList.add('visible');
-      errorEl.querySelector('h2').textContent = '未指定文章';
-      errorEl.querySelector('p').textContent  = '请从文章目录选择要阅读的文章。';
-    } else if (!ARTICLES[slug]) {
-      // Slug not in registry: show error
-      loadingEl.style.display = 'none';
-      articleEl.style.display = 'none';
-      errorEl.classList.add('visible');
-      document.title = '404 · 文章没有找到 — CLCLab';
+      showError('未指定文章', '请从文章目录选择要阅读的文章。');
     } else {
-      // Fetch and render
-      const meta = ARTICLES[slug];
-
-      // Update page title
-      document.title = meta.title + ' — CLCLab';
-      document.querySelector('meta[name="description"]')
-        .setAttribute('content', meta.subtitle || '');
-
-      // Build the subtitle element and insert after h1
-      const subtitleHtml = meta.subtitle
-        ? `<p class="article-subtitle">${meta.subtitle}</p>`
-        : '';
-
-      titleEl.innerHTML = meta.title;
-      titleEl.insertAdjacentHTML('afterend', subtitleHtml);
-
-      dateEl.textContent    = meta.date;
-      updatedEl.textContent = '更新于 ' + meta.updated;
-
-      // Set marked options
-      if (typeof marked !== 'undefined') {
-        marked.setOptions({
-          breaks: true,       // GFM line breaks
-          gfm: true,          // GitHub Flavored Markdown
-        });
-      }
-
-      fetch(slug + '.md', { cache: 'force-cache' })
-        .then(res => {
-          if (!res.ok) throw new Error('not found');
-          return res.text();
-        })
-        .then(md => {
-          if (typeof marked !== 'undefined') {
-            contentEl.innerHTML = marked.parse(md);
-          } else {
-            // Fallback: show raw Markdown if CDN fails
-            contentEl.innerHTML = '<pre>' + md.replace(/</g, '&lt;') + '</pre>';
-            contentEl.style.fontFamily = 'var(--mono)';
-            contentEl.style.fontSize = '14px';
+      // 1. Fetch registry to validate slug + get metadata
+      fetch('registry.json', { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(data => {
+          const meta = (data.articles || []).find(a => a.slug === slug);
+          if (!meta) {
+            showError('文章没有找到', '你访问的文章暂时不存在，可能已被移除。', '404 · 文章没有找到 — CLCLab');
+            return null;
           }
-        })
-        .then(() => {
-          // Hide loading, show content
-          loadingEl.style.display = 'none';
-          articleEl.style.display = 'block';
 
-          // Trigger reveal animations
-          requestAnimationFrame(() => {
-            document.querySelectorAll('.reveal').forEach((el, idx) => {
-              el.style.transitionDelay = idx * 80 + 'ms';
-              el.classList.add('in');
+          // Update page title
+          document.title = meta.title + ' — CLCLab';
+          const descMeta = document.querySelector('meta[name="description"]');
+          if (descMeta && (meta.excerpt || meta.subtitle)) {
+            descMeta.setAttribute('content', meta.excerpt || meta.subtitle);
+          }
+
+          // Populate (escaped)
+          titleEl.textContent = meta.title;
+          const subtitleHtml = (meta.excerpt || meta.subtitle)
+            ? `<p class="article-subtitle">${escape(meta.excerpt || meta.subtitle)}</p>`
+            : '';
+          titleEl.insertAdjacentHTML('afterend', subtitleHtml);
+
+          dateEl.textContent    = meta.date;
+          updatedEl.textContent = '更新于 ' + (meta.updated || meta.date);
+
+          // Set marked options
+          if (typeof marked !== 'undefined') {
+            marked.setOptions({ breaks: true, gfm: true });
+          }
+
+          // 2. Fetch the Markdown content
+          return fetch(slug + '.md', { cache: 'force-cache' })
+            .then(res => {
+              if (!res.ok) throw new Error('article body not found');
+              return res.text();
+            })
+            .then(md => {
+              if (typeof marked !== 'undefined') {
+                contentEl.innerHTML = marked.parse(md);
+              } else {
+                // Fallback: show raw MD if marked.js failed to load
+                contentEl.innerHTML = '<pre>' + escape(md) + '</pre>';
+                contentEl.style.fontFamily = 'var(--mono)';
+                contentEl.style.fontSize   = '14px';
+              }
+            })
+            .then(() => {
+              loadingEl.style.display = 'none';
+              articleEl.style.display  = 'block';
+              requestAnimationFrame(() => {
+                document.querySelectorAll('.reveal').forEach((el, idx) => {
+                  el.style.transitionDelay = idx * 80 + 'ms';
+                  el.classList.add('in');
+                });
+              });
             });
-          });
         })
-        .catch(() => {
-          loadingEl.style.display = 'none';
-          articleEl.style.display  = 'none';
-          errorEl.classList.add('visible');
+        .catch(err => {
+          console.error('Article load error:', err);
+          showError('加载失败', '无法加载文章，请稍后重试。');
         });
     }
   </script>
