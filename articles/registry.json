@@ -1,5 +1,21 @@
-{
+﻿{
   "articles": [
+    {
+      "slug": "frontmatter-template",
+      "title": "用 frontmatter 发布文章（模板示例）",
+      "date": "2026-06-18",
+      "updated": "2026-06-18",
+      "excerpt": "演示如何在 Markdown 顶部用 YAML frontmatter 控制文章的元数据。",
+      "tags": ["教程", "模板"]
+    },
+    {
+      "slug": "cursor-copilot",
+      "title": "第二篇示例：Cursor + Copilot 协作写作体验",
+      "date": "2026-06-15",
+      "updated": "2026-06-15",
+      "excerpt": "为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。",
+      "tags": ["AI", "工具评测"]
+    },
     {
       "slug": "clclab-build",
       "title": "CLCLab 建站复盘",
@@ -7,14 +23,6 @@
       "updated": "2026-06-13",
       "excerpt": "从零到上线花了不到一天。记录技术选型、踩过的坑和后续计划。",
       "tags": ["建站", "Cloudflare"]
-    },
-    {
-      "slug": "cursor-copilot",
-      "title": "Cursor + Copilot 协作写作体验",
-      "date": "2026-06-15",
-      "updated": "2026-06-15",
-      "excerpt": "为期两周的实验，对比两者在代码质量、补全速度和上下文切换成本上的差异。",
-      "tags": ["AI", "工具评测"]
     }
   ]
 }

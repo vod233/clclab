@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Pre-commit hook: auto-sync articles registry before commit
+# Configured via: git config core.hooksPath .githooks
+
+ROOT="$(git rev-parse --show-toplevel)"
+PS="$ROOT/sync-articles.ps1"
+
+if [ -f "$PS" ]; then
+    powershell.exe -ExecutionPolicy Bypass -File "$PS" 2>&1
+    # Exit code from PowerShell — propagate so broken commits can be stopped
+    exit $?
+fi
+
+exit 0
