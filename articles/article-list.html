@@ -53,6 +53,9 @@
     }
     ::selection { background: rgba(0,102,204,.18); }
 
+    /* Off-screen content skip */
+    section { content-visibility: auto; contain-intrinsic-size: auto 1000px; }
+
     /* ── Layout ─────────────────────────────────────── */
     .container {
       max-width: var(--max-width);

@@ -11,6 +11,12 @@
 
   <!-- No external font CDN — uses system fonts for China network performance -->
 
+  <!-- DNS prefetch for outbound links -->
+  <link rel="dns-prefetch" href="https://github.com" />
+  <link rel="dns-prefetch" href="https://chat.openai.com" />
+  <link rel="dns-prefetch" href="https://claude.ai" />
+  <link rel="preconnect" href="https://github.com" crossorigin />
+
   <!-- =========================================================
        STYLES
        1. Reset & tokens
@@ -130,6 +136,13 @@
     section {
       padding: 140px 0;
       position: relative;
+    }
+
+    /* Skip rendering of off-screen sections — major paint savings on long pages.
+       Note: hero (#top) is excluded since it must render immediately. */
+    section[id]:not(#top) {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 1200px;
     }
 
     section[id] {
@@ -407,20 +420,23 @@
     .hero-bg .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.5;
+      /* Reduced from 100px to 60px — major GPU savings, virtually identical look */
+      filter: blur(60px);
+      opacity: 0.55;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .hero-bg .orb-1 {
-      width: 540px;
-      height: 540px;
+      width: 620px;
+      height: 620px;
       background: radial-gradient(circle, #ffd9b8 0%, transparent 70%);
       top: -160px;
       right: -100px;
     }
     .hero-bg .orb-2 {
-      width: 420px;
-      height: 420px;
+      width: 480px;
+      height: 480px;
       background: radial-gradient(circle, #d6e0ff 0%, transparent 70%);
       bottom: -180px;
       left: -120px;

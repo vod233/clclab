@@ -53,6 +53,9 @@
     }
     ::selection { background: rgba(0,102,204,.18); }
 
+    /* Off-screen content skip — reduces initial paint cost on long pages */
+    section { content-visibility: auto; contain-intrinsic-size: auto 1200px; }
+
     /* ── Nav ───────────────────────────────────────── */
     .nav {
       position: fixed; top: 0; left: 0; right: 0;
@@ -403,8 +406,9 @@
     </div>
   </footer>
 
-  <!-- marked.js: converts Markdown → HTML -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- marked.js: vendored locally for reliability (no CDN dependency).
+       defer = parse HTML in parallel, run before DOMContentLoaded. -->
+  <script src="marked.min.js" defer></script>
 
   <script>
     /* ── Nav shadow ────────────────────────────────── */
@@ -489,7 +493,7 @@
         });
       }
 
-      fetch(slug + '.md')
+      fetch(slug + '.md', { cache: 'force-cache' })
         .then(res => {
           if (!res.ok) throw new Error('not found');
           return res.text();
